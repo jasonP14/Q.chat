@@ -1,0 +1,65 @@
+/* Override styles for nes.css to better fit the app */
+/* Ensure the Press Start 2P font is applied throughout the app */
+      body {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 12px; /* Adjust font size as needed, as this font is quite large */
+        line-height: 1.5;
+      }
+      /* Adjust specific nes.css elements for better usability */
+      .nes-input, .nes-textarea {
+        margin-top: 6px;
+      }
+      /* Make the app a bit more responsive */
+      @media (max-width: 600px) {
+        body {
+          font-size: 10px;
+        }
+      }
+/* Adjust container padding */
+.nes-container {
+  padding: 1rem;
+}
+
+/* Adjust balloon spacing */
+.nes-balloon {
+  padding: 0.75rem 1rem;
+}
+
+/* Adjust input heights */
+.nes-input {
+  height: 36px;
+  margin-top: 4px;
+}
+
+/* Adjust button sizes */
+.nes-btn.is-small {
+  padding: 0.25rem 0.5rem;
+}
+
+/* Add some responsive adjustments */
+@media (max-width: 768px) {
+  .nes-container {
+    padding: 0.5rem;
+  }
+  
+  .nes-balloon {
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+/* Fix some spacing issues */
+label {
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* Add animation to typing indicator */
+@keyframes blink {
+  0% { opacity: 0.7; }
+  50% { opacity: 0.4; }
+  100% { opacity: 0.7; }
+}
+
+.is-typing {
+  animation: blink 1.5s infinite;
+}

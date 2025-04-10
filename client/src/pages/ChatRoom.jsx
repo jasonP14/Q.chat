@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { socket } from '../services/socket';
+import ChatIcon from '../components/ChatIcon';
+import 'nes.css/css/nes.min.css'; // Import nes.css
 
 function ChatRoom() {
   const { roomId } = useParams(); // Get the room ID from URL
@@ -119,25 +121,37 @@ function ChatRoom() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-slate-100">
+    <div className="nes-container is-rounded" style={{ 
+      height: '100vh', 
+      padding: '0',
+      display: 'flex', 
+      flexDirection: 'column',
+      maxWidth: '100%',
+      margin: '0',
+      borderRadius: '0'
+    }}>
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-4 py-3 flex justify-between items-center shadow-sm">
-        <div className="flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-indigo-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-          </svg>
-          <h1 className="text-lg font-semibold text-slate-800">
-            Room: {roomId}
-          </h1>
+      <header style={{ 
+        borderBottom: '4px solid #000', 
+        padding: '8px 16px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: '#fff'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ marginRight: '8px', display: 'flex', alignItems: 'center' }}>
+            <ChatIcon width={48} height={48} />
+          </div>
         </div>
-        <div className="flex items-center">
-          <span className={`inline-block w-2 h-2 rounded-full mr-2 ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></span>
-          <span className="text-sm text-slate-600 mr-4">
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <i className={`nes-icon ${isConnected ? 'heart' : 'heart is-empty'} is-small`} style={{ marginRight: '8px' }}></i>
+          <span style={{ marginRight: '16px' }}>
             {isConnected ? 'Connected' : 'Disconnected'}
           </span>
           <button 
             onClick={handleLeaveRoom}
-            className="text-sm px-3 py-1 bg-slate-200 hover:bg-slate-300 rounded-md transition-colors"
+            className="nes-btn is-error is-small"
           >
             Leave
           </button>
@@ -145,23 +159,27 @@ function ChatRoom() {
       </header>
       
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div style={{ 
+        flex: '1', 
+        overflowY: 'auto', 
+        padding: '16px',
+        backgroundColor: '#f5f5f5'
+      }}>
         {messages.map((msg, index) => (
           <div 
             key={index}
-            className={`max-w-xs md:max-w-md px-4 py-2 rounded-lg ${
-            //   msg.senderId === socket.id 
-            //     ? 'bg-indigo-500 text-white ml-auto' 
-            //     : 'bg-white text-slate-800 border border-slate-200'
-                msg.senderId === socket.id
-                ? 'bg-white text-slate-800 ml-auto'
-                : 'bg-indigo-500 text-white border border-slate-200'
-            }`}
+            className={`message-container ${msg.senderId === socket.id ? 'from-me' : 'from-them'}`}
+            style={{ marginBottom: '16px', display: 'flex', justifyContent: msg.senderId === socket.id ? 'flex-end' : 'flex-start' }}
           >
-            <div className="text-xs mb-1 font-medium">
-              {msg.senderId === socket.id ? 'You' : msg.senderName}
+            <div className={`nes-balloon ${msg.senderId === socket.id ? 'from-right' : 'from-left'}`} style={{ 
+              maxWidth: '70%',
+              wordBreak: 'break-word'
+            }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+                {msg.senderId === socket.id ? 'You' : msg.senderName}
+              </div>
+              <p style={{ margin: '0' }}>{msg.text}</p>
             </div>
-            <div>{msg.text}</div>
           </div>
         ))}
         
@@ -169,12 +187,19 @@ function ChatRoom() {
         {Object.entries(typingUsers).map(([userId, user]) => (
           <div 
             key={userId}
-            className="max-w-xs md:max-w-md px-4 py-2 rounded-lg bg-white text-slate-500 border border-slate-200 opacity-75"
+            className="message-container from-them"
+            style={{ marginBottom: '16px', display: 'flex', justifyContent: 'flex-start' }}
           >
-            <div className="text-xs mb-1 font-medium">
-              {user.displayName} is typing...
+            <div className="nes-balloon from-left is-dark" style={{ 
+              maxWidth: '70%',
+              opacity: '0.7',
+              wordBreak: 'break-word'
+            }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+                {user.displayName} is typing...
+              </div>
+              <p style={{ margin: '0' }}>{user.text}</p>
             </div>
-            <div>{user.text}</div>
           </div>
         ))}
         
@@ -182,18 +207,24 @@ function ChatRoom() {
       </div>
       
       {/* Message input */}
-      <div className="bg-white border-t border-slate-200 p-4">
-        <form onSubmit={handleSubmit} className="flex space-x-2">
-          <input
-            type="text"
-            value={message}
-            onChange={handleMessageChange}
-            placeholder="Type a message..."
-            className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-          />
+      <div style={{ 
+        borderTop: '4px solid #000', 
+        padding: '16px',
+        backgroundColor: '#fff'
+      }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '8px' }}>
+          <div className="nes-field" style={{ flex: '1' }}>
+            <input
+              type="text"
+              value={message}
+              onChange={handleMessageChange}
+              placeholder="Type a message..."
+              className="nes-input"
+            />
+          </div>
           <button
             type="submit"
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+            className="nes-btn is-primary"
           >
             Send
           </button>
