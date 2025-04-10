@@ -24,12 +24,14 @@ function ChatRoom() {
     }
   }, [displayName, navigate]);
 
-  // Handle socket connection and events
+  // Replace the useEffect block that handles socket connection with this:
   useEffect(() => {
     if (!displayName) return;
 
-    // Connect to socket
-    socket.connect();
+    // Connect to socket if not already connected
+    if (!socket.connected) {
+      socket.connect();
+    }
     
     // Join the room
     socket.emit('join_room', { roomId, displayName });
@@ -59,11 +61,16 @@ function ChatRoom() {
       });
     }
     
-    // Register socket event listeners
+    // Only register event listeners once
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('message', onMessage);
     socket.on('user_typing', onUserTyping);
+    
+    // Handle connection status
+    if (socket.connected) {
+      setIsConnected(true);
+    }
     
     // Clean up on unmount
     return () => {
@@ -71,11 +78,34 @@ function ChatRoom() {
       socket.off('disconnect', onDisconnect);
       socket.off('message', onMessage);
       socket.off('user_typing', onUserTyping);
-      socket.emit('leave_room', { roomId });
-      socket.disconnect();
+      
+      // Only emit leave_room if we're actually leaving the page
+      // not just on React re-render
+      if (socket.connected) {
+        socket.emit('leave_room', { roomId });
+        // Don't disconnect here - only disconnect when user navigates away
+      }
     };
-  }, [roomId, displayName, navigate]);
-  
+  }, [roomId, displayName]); // Remove navigate from dependencies
+    
+  // Handle browser navigation/refresh
+  useEffect(() => {
+    // This runs when the component unmounts during page navigation
+    const handleBeforeUnload = () => {
+      if (socket.connected) {
+        socket.emit('leave_room', { roomId });
+        socket.disconnect();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      handleBeforeUnload();
+    };
+  }, [roomId]);
+
   // Scroll to bottom when messages update
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
