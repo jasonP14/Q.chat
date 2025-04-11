@@ -14,6 +14,7 @@ function ChatRoom() {
   const navigate = useNavigate();
   const displayName = location.state?.displayName;
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null); // Ref for input element
   
   // State
   const [message, setMessage] = useState('');
@@ -136,7 +137,11 @@ function ChatRoom() {
   // Handle message submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    // Refocus input
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+
     if (message.trim()) {
       // Send message
       socket.emit('send_message', {
@@ -155,6 +160,8 @@ function ChatRoom() {
         isTyping: false,
         text: ''
       });
+
+      
     }
   };
   
@@ -251,7 +258,7 @@ function ChatRoom() {
       
       {/* Message input */}
       <div className="message-input">
-        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
           <div className="nes-field" style={{ flex: '1' }}>
             <input
               type="text"
@@ -259,15 +266,16 @@ function ChatRoom() {
               onChange={handleMessageChange}
               placeholder="Type a message..."
               className="nes-input"
+              ref={inputRef} // Attach ref to input element
             />
           </div>
           <button
-            type="submit"
+            onClick={handleSubmit}
             className="nes-btn is-primary"
           >
             Send
           </button>
-        </form>
+        </div>
       </div>
     </div>
   );
