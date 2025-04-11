@@ -29,7 +29,6 @@ function ChatRoom() {
     }
   }, [displayName, navigate]);
 
-  // Replace the useEffect block that handles socket connection with this:
   useEffect(() => {
     if (!displayName) return;
 
@@ -160,8 +159,6 @@ function ChatRoom() {
         isTyping: false,
         text: ''
       });
-
-      
     }
   };
   
@@ -215,23 +212,52 @@ function ChatRoom() {
         padding: '16px',
         backgroundColor: '#f5f5f5'
       }}>
-        {messages.map((msg, index) => (
-          <div 
-            key={index}
-            className={`message-container ${msg.senderId === socket.id ? 'from-me' : 'from-them'}`}
-            style={{ marginBottom: '16px', display: 'flex', justifyContent: msg.senderId === socket.id ? 'flex-end' : 'flex-start' }}
-          >
-            <div className={`nes-balloon ${msg.senderId === socket.id ? 'from-right' : 'from-left'}`} style={{ 
-              maxWidth: '70%',
-              wordBreak: 'break-word'
-            }}>
-              <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
-                {msg.senderId === socket.id ? 'You' : msg.senderName}
+        {messages.map((msg, index) => {
+          if (msg.type === 'system') {
+            // System message
+            return (
+              <div 
+                key={index}
+                style={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  marginBottom: '16px',
+                  marginTop: '16px'
+                }}
+              >
+                <div className="nes-container is-rounded is-dark" style={{ 
+                  textAlign: 'center',
+                  display: 'inline-block',
+                  padding: '8px 16px'
+                }}>
+                  <span>{msg.text}</span>
+                  {msg.userCount && (
+                    <span>{msg.userCount === 1 ? " They're the only one here." : ` There are now ${msg.userCount} people in the room.`}</span>
+                  )}
+                </div> 
               </div>
-              <p style={{ margin: '0' }}>{msg.text}</p>
-            </div>
-          </div>
-        ))}
+            );
+          } else {
+            // Regular message
+            return (
+              <div 
+                key={index}
+                className={`message-container ${msg.senderId === socket.id ? 'from-me' : 'from-them'}`}
+                style={{ marginBottom: '16px', display: 'flex', justifyContent: msg.senderId === socket.id ? 'flex-end' : 'flex-start' }}
+              >
+                <div className={`nes-balloon ${msg.senderId === socket.id ? 'from-right' : 'from-left'}`} style={{ 
+                  maxWidth: '70%',
+                  wordBreak: 'break-word'
+                }}>
+                  <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+                    {msg.senderId === socket.id ? 'You' : msg.senderName}
+                  </div>
+                  <p style={{ margin: '0' }}>{msg.text}</p>
+                </div>
+              </div>
+            );
+          }
+        })}
         
         {/* Typing indicators */}
         {Object.entries(typingUsers).map(([userId, user]) => (
@@ -257,7 +283,7 @@ function ChatRoom() {
       </div>
       
       {/* Message input */}
-      <div className="message-input">
+      <div className="message-input" style={{ padding: '16px', borderTop: '4px solid #000' }}>
         <div style={{ display: 'flex', gap: '8px' }}>
           <div className="nes-field" style={{ flex: '1' }}>
             <input
