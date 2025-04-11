@@ -82,6 +82,9 @@ function LandingPage() {
         <div className="nes-text is-disabled" style={{ textAlign: 'center', marginTop: '16px', fontSize: '10px' }}>
           Messages are not stored. Enter a room name to join or create it.
         </div>
+        <div className="nes-text" style={{ textAlign: 'center', marginTop: '24px', fontSize: '10px' }}>
+          Made with <i className="nes-icon heart is-small"></i> by Fahad
+        </div>
       </div>
     </div>
   );
