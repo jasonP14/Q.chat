@@ -237,11 +237,7 @@ function ChatRoom() {
       </div>
       
       {/* Message input */}
-      <div style={{ 
-        borderTop: '4px solid #000', 
-        padding: '16px',
-        backgroundColor: '#fff'
-      }}>
+      <div className="message-input">
         <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '8px' }}>
           <div className="nes-field" style={{ flex: '1' }}>
             <input
