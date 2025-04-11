@@ -4,6 +4,10 @@ import { socket } from '../services/socket';
 import ChatIcon from '../components/ChatIcon';
 import 'nes.css/css/nes.min.css'; // Import nes.css
 
+// Import sound effects
+import sentSound from '../assets/sent.mp3';
+import receivedSound from '../assets/received.mp3';
+
 function ChatRoom() {
   const { roomId } = useParams(); // Get the room ID from URL
   const location = useLocation();
@@ -47,6 +51,11 @@ function ChatRoom() {
     
     function onMessage(newMessage) {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
+      // Play received sound only if the message is not from the current user
+      if (newMessage.senderId !== socket.id) {
+        const audio = new Audio(receivedSound);
+        audio.play();
+      }
     }
     
     function onUserTyping({ userId, displayName, isTyping, text }) {
@@ -135,6 +144,10 @@ function ChatRoom() {
         text: message
       });
       
+      // Play sent sound
+      const audio = new Audio(sentSound);
+      audio.play();
+
       // Clear input and typing state
       setMessage('');
       socket.emit('typing', {
