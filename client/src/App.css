@@ -59,9 +59,9 @@ label {
 }
 
 @keyframes typing-animation {
-  0% { content: '.'; }
-  33% { content: '..'; }
-  66% { content: '...'; }
+  0%   { content: '.\00a0\00a0'; }
+  33%  { content: '..\00a0'; }
+  66%  { content: '...'; }
   100% { content: '...'; } /* Keep at ... for the last step to create a pause if needed, or adjust timings */
 }
 
