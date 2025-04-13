@@ -120,6 +120,14 @@ function ChatRoom() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
   
+  // Scroll to bottom when someone is typing
+  useEffect(() => {
+    // Only scroll if there are typing users (someone is typing)
+    if (Object.keys(typingUsers).length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [typingUsers]);
+  
   // Handle message input changes and emit typing events
   const handleMessageChange = (e) => {
     const text = e.target.value;
