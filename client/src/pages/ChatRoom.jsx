@@ -177,7 +177,7 @@ function ChatRoom() {
 
   return (
     <div className="nes-container is-rounded" style={{ 
-      height: '100vh', 
+      height: '100dvh', 
       padding: '0',
       display: 'flex', 
       flexDirection: 'column',

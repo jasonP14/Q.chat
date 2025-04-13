@@ -31,7 +31,7 @@ function LandingPage() {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      height: '100vh',
+      height: '100dvh',
       backgroundColor: '#f5f5f5',
       fontFamily: 'Press Start 2P, cursive', // NES.css recommends this font
       padding: '16px'
