@@ -231,7 +231,7 @@ function ChatRoom() {
                   padding: '8px 16px'
                 }}>
                   <span>{msg.text}</span>
-                  {msg.userCount && (
+                  {msg.text.includes("joined") && msg.userCount && (
                     <span>{msg.userCount === 1 ? " They're the only one here." : ` There are now ${msg.userCount} people in the room.`}</span>
                   )}
                 </div> 
