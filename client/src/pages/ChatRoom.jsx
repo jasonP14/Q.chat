@@ -280,7 +280,7 @@ function ChatRoom() {
               wordBreak: 'break-word'
             }}>
               <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
-                {user.displayName} is typing...
+                {user.displayName} is typing<span className="typing-dots"></span>
               </div>
               <p style={{ margin: '0' }}>{user.text}</p>
             </div>
