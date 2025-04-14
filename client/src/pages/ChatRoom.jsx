@@ -291,8 +291,8 @@ function ChatRoom() {
       </div>
       
       {/* Message input */}
-      <div className="message-input" style={{ padding: '16px', borderTop: '4px solid #000' }}>
-        <div style={{ display: 'flex', gap: '8px' }}>
+      <div className="message-input">
+        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '8px' }}>
           <div className="nes-field" style={{ flex: '1' }}>
             <input
               type="text"
@@ -300,17 +300,16 @@ function ChatRoom() {
               onChange={handleMessageChange}
               placeholder="Type a message..."
               className="nes-input"
-              ref={inputRef} // Attach ref to input element
             />
           </div>
           <button
-            onClick={handleSubmit}
+            type="submit"
             className="nes-btn is-primary"
           >
             Send
           </button>
-        </div>
-      </div>
+        </form>
+      </div> 
     </div>
   );
 }
