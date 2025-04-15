@@ -19,15 +19,6 @@ const io = new Server(server, {
 // Handle socket connections
 handleSocketConnections(io);
 
-// Serve static files in production
-//if (process.env.NODE_ENV === 'production') {
-//  app.use(express.static(path.join(__dirname, '../client/dist')));
-//  
-//  app.get('*', (req, res) => {
-//    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-//  });
-//}
-
 // Basic health check endpoint
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
