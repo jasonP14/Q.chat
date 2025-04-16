@@ -114,7 +114,6 @@ function useChat(roomId, displayName) {
     setTypingStatus(false, '');
   };
 
-  // Function to set typing status
   const setTypingStatus = (isTyping, text) => {
     socket.emit('typing', {
       roomId,
@@ -123,7 +122,6 @@ function useChat(roomId, displayName) {
     });
   };
 
-  // Function to leave the room
   const leaveRoom = () => {
     if (socket.connected) {
       socket.emit('leave_room', { roomId });

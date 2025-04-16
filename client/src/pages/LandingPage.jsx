@@ -21,7 +21,7 @@ function LandingPage() {
         state: { displayName: displayName.trim() }
       });
     } else {
-      // Replace alert with a more integrated UI message using nes.css dialog in the future
+      // TODO Replace alert with a more integrated UI message using nes.css dialog in the future
       alert('Please enter both a display name and a room name.');
     }
   };
@@ -33,7 +33,7 @@ function LandingPage() {
       alignItems: 'center',
       height: '100dvh',
       backgroundColor: '#f5f5f5',
-      fontFamily: 'Press Start 2P, cursive', // NES.css recommends this font
+      fontFamily: 'Press Start 2P, cursive',
       padding: '16px'
     }}>
       <div className="nes-container is-rounded with-title" style={{ maxWidth: '400px', width: '100%' }}>

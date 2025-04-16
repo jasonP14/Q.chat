@@ -9,7 +9,6 @@ export const socket = io(import.meta.env.VITE_SOCKET_SERVER_URL || "http://local
   timeout: 10000
 });
 
-// Optional: Add socket event logging for debugging
 if (import.meta.env.DEV) {
   socket.onAny((event, ...args) => {
     console.log(`[socket] ${event}`, args);
