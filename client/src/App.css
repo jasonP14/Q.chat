@@ -72,3 +72,13 @@ label {
   padding-bottom: calc(env(safe-area-inset-bottom) + 20px); /* Add extra padding if needed */
   box-sizing: border-box;
 }
+
+#messagearea {
+  border-image-source: none;
+}
+
+@media (max-width: 800px) {
+  #messagearea {
+    border: none;
+  }
+}
