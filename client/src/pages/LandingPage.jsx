@@ -21,7 +21,7 @@ function LandingPage() {
         state: { displayName: displayName.trim() }
       });
     } else {
-      // Replace alert with a more integrated UI message using nes.css dialog in the future
+      // TODO Replace alert with a more integrated UI message using nes.css dialog in the future
       alert('Please enter both a display name and a room name.');
     }
   };
@@ -31,9 +31,9 @@ function LandingPage() {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      height: '100vh',
+      height: '100dvh',
       backgroundColor: '#f5f5f5',
-      fontFamily: 'Press Start 2P, cursive', // NES.css recommends this font
+      fontFamily: 'Press Start 2P, cursive',
       padding: '16px'
     }}>
       <div className="nes-container is-rounded with-title" style={{ maxWidth: '400px', width: '100%' }}>
@@ -81,6 +81,9 @@ function LandingPage() {
 
         <div className="nes-text is-disabled" style={{ textAlign: 'center', marginTop: '16px', fontSize: '10px' }}>
           Messages are not stored. Enter a room name to join or create it.
+        </div>
+        <div className="nes-text" style={{ textAlign: 'center', marginTop: '24px', fontSize: '10px' }}>
+          Made with <i className="nes-icon heart is-small"></i> by Fahad
         </div>
       </div>
     </div>

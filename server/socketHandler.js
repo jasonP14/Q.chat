@@ -37,11 +37,15 @@ function handleSocketConnections(io) {
 
       // Add user to the active room
       activeRooms.get(roomId).set(socket.id, userData);
+      
+      // Get user count
+      const userCount = activeRooms.get(roomId).size;
 
       // Notify the room about the new user
       io.to(roomId).emit('message', {
         type: 'system',
-        text: `${displayName} has joined the room`,
+        text: `${displayName} has joined the room.`,
+        userCount: userCount,
         timestamp: Date.now()
       });
 
@@ -119,20 +123,24 @@ function handleSocketConnections(io) {
         // Remove from tracking
         userRooms.delete(socket.id);
         
-        // Clean up empty rooms
-        if (roomUsers.size === 0) {
-          activeRooms.delete(roomId);
-          console.log(`Room ${roomId} is now empty and has been removed`);
-        }
-
+        // Get updated user count
+        const userCount = roomUsers.size;
+        
         // Only notify if specified (prevents notification during room switching)
         if (notifyRoom) {
           // Notify room that user has left
           io.to(roomId).emit('message', {
             type: 'system',
-            text: `${user.displayName} has left the room`,
+            text: `${user.displayName} has left the room.`,
+            userCount: userCount,
             timestamp: Date.now()
           });
+        }
+        
+        // Clean up empty rooms
+        if (roomUsers.size === 0) {
+          activeRooms.delete(roomId);
+          console.log(`Room ${roomId} is now empty and has been removed`);
         }
 
         // Leave the socket.io room

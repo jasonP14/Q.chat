@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { socket } from '../services/socket';
+import useChat from '../services/chatService';
 import ChatIcon from '../components/ChatIcon';
 import 'nes.css/css/nes.min.css'; // Import nes.css
-
-// Import sound effects
-import sentSound from '../assets/sent.mp3';
-import receivedSound from '../assets/received.mp3';
 
 function ChatRoom() {
   const { roomId } = useParams(); // Get the room ID from URL
@@ -18,9 +14,16 @@ function ChatRoom() {
   
   // State
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([]);
-  const [typingUsers, setTypingUsers] = useState({});
-  const [isConnected, setIsConnected] = useState(false);
+  
+  // Use our chat service hook
+  const { 
+    messages, 
+    typingUsers, 
+    isConnected, 
+    sendMessage,
+    setTypingStatus,
+    leaveRoom
+  } = useChat(roomId, displayName);
   
   // Redirect if no display name was provided
   useEffect(() => {
@@ -29,109 +32,26 @@ function ChatRoom() {
     }
   }, [displayName, navigate]);
 
-  // Replace the useEffect block that handles socket connection with this:
-  useEffect(() => {
-    if (!displayName) return;
-
-    // Connect to socket if not already connected
-    if (!socket.connected) {
-      socket.connect();
-    }
-    
-    // Join the room
-    socket.emit('join_room', { roomId, displayName });
-    
-    // Socket event handlers
-    function onConnect() {
-      setIsConnected(true);
-    }
-    
-    function onDisconnect() {
-      setIsConnected(false);
-    }
-    
-    function onMessage(newMessage) {
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-      // Play received sound only if the message is not from the current user
-      if (newMessage.senderId !== socket.id) {
-        const audio = new Audio(receivedSound);
-        audio.play();
-      }
-    }
-    
-    function onUserTyping({ userId, displayName, isTyping, text }) {
-      setTypingUsers(prev => {
-        if (isTyping) {
-          return { ...prev, [userId]: { displayName, text } };
-        } else {
-          const updated = { ...prev };
-          delete updated[userId];
-          return updated;
-        }
-      });
-    }
-    
-    // Only register event listeners once
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-    socket.on('message', onMessage);
-    socket.on('user_typing', onUserTyping);
-    
-    // Handle connection status
-    if (socket.connected) {
-      setIsConnected(true);
-    }
-    
-    // Clean up on unmount
-    return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-      socket.off('message', onMessage);
-      socket.off('user_typing', onUserTyping);
-      
-      // Only emit leave_room if we're actually leaving the page
-      // not just on React re-render
-      if (socket.connected) {
-        socket.emit('leave_room', { roomId });
-        // Don't disconnect here - only disconnect when user navigates away
-      }
-    };
-  }, [roomId, displayName]); // Remove navigate from dependencies
-    
-  // Handle browser navigation/refresh
-  useEffect(() => {
-    // This runs when the component unmounts during page navigation
-    const handleBeforeUnload = () => {
-      if (socket.connected) {
-        socket.emit('leave_room', { roomId });
-        socket.disconnect();
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      handleBeforeUnload();
-    };
-  }, [roomId]);
-
   // Scroll to bottom when messages update
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+  
+  // Scroll to bottom when someone is typing
+  useEffect(() => {
+    // Only scroll if there are typing users (someone is typing)
+    if (Object.keys(typingUsers).length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [typingUsers]);
   
   // Handle message input changes and emit typing events
   const handleMessageChange = (e) => {
     const text = e.target.value;
     setMessage(text);
     
-    // Emit typing event
-    socket.emit('typing', {
-      roomId,
-      isTyping: text.length > 0,
-      text
-    });
+    // Update typing status
+    setTypingStatus(text.length > 0, text);
   };
   
   // Handle message submission
@@ -144,41 +64,29 @@ function ChatRoom() {
 
     if (message.trim()) {
       // Send message
-      socket.emit('send_message', {
-        roomId,
-        text: message
-      });
+      sendMessage(message);
       
-      // Play sent sound
-      const audio = new Audio(sentSound);
-      audio.play();
-
-      // Clear input and typing state
+      // Clear input
       setMessage('');
-      socket.emit('typing', {
-        roomId,
-        isTyping: false,
-        text: ''
-      });
-
-      
     }
   };
   
   // Handle leaving the room
   const handleLeaveRoom = () => {
+    leaveRoom();
     navigate('/', { replace: true });
   };
 
   return (
-    <div className="nes-container is-rounded" style={{ 
-      height: '100vh', 
+    <div className="nes-container is-rounded" id="messagearea" style={{ 
+      height: '100dvh', 
       padding: '0',
       display: 'flex', 
       flexDirection: 'column',
-      maxWidth: '100%',
-      margin: '0',
-      borderRadius: '0'
+      width: '100%',
+      margin: '0 auto', /* Add 'auto' to left and right margins for centering */
+      borderRadius: '0',
+      maxWidth: '800px' /* Limit max width for desktop screens */
     }}>
       {/* Header */}
       <header style={{ 
@@ -215,23 +123,52 @@ function ChatRoom() {
         padding: '16px',
         backgroundColor: '#f5f5f5'
       }}>
-        {messages.map((msg, index) => (
-          <div 
-            key={index}
-            className={`message-container ${msg.senderId === socket.id ? 'from-me' : 'from-them'}`}
-            style={{ marginBottom: '16px', display: 'flex', justifyContent: msg.senderId === socket.id ? 'flex-end' : 'flex-start' }}
-          >
-            <div className={`nes-balloon ${msg.senderId === socket.id ? 'from-right' : 'from-left'}`} style={{ 
-              maxWidth: '70%',
-              wordBreak: 'break-word'
-            }}>
-              <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
-                {msg.senderId === socket.id ? 'You' : msg.senderName}
+        {messages.map((msg, index) => {
+          if (msg.type === 'system') {
+            // System message
+            return (
+              <div 
+                key={index}
+                style={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  marginBottom: '16px',
+                  marginTop: '16px'
+                }}
+              >
+                <div className="nes-container is-rounded is-dark" style={{ 
+                  textAlign: 'center',
+                  display: 'inline-block',
+                  padding: '8px 16px'
+                }}>
+                  <span>{msg.text}</span>
+                  {msg.text.includes("joined") && msg.userCount && (
+                    <span>{msg.userCount === 1 ? " They're the only one here." : ` There are now ${msg.userCount} people in the room.`}</span>
+                  )}
+                </div> 
               </div>
-              <p style={{ margin: '0' }}>{msg.text}</p>
-            </div>
-          </div>
-        ))}
+            );
+          } else {
+            // Regular message
+            return (
+              <div 
+                key={index}
+                className={`message-container ${msg.senderId === msg.currentUserId ? 'from-me' : 'from-them'}`}
+                style={{ marginBottom: '16px', display: 'flex', justifyContent: msg.senderId === msg.currentUserId ? 'flex-end' : 'flex-start' }}
+              >
+                <div className={`nes-balloon ${msg.senderId === msg.currentUserId ? 'from-right' : 'from-left'}`} style={{ 
+                  maxWidth: '70%',
+                  wordBreak: 'break-word'
+                }}>
+                  <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+                    {msg.senderId === msg.currentUserId ? 'You' : msg.senderName}
+                  </div>
+                  <p style={{ margin: '0' }}>{msg.text}</p>
+                </div>
+              </div>
+            );
+          }
+        })}
         
         {/* Typing indicators */}
         {Object.entries(typingUsers).map(([userId, user]) => (
@@ -246,7 +183,7 @@ function ChatRoom() {
               wordBreak: 'break-word'
             }}>
               <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
-                {user.displayName} is typing...
+                {user.displayName} is typing<span className="typing-dots"></span>
               </div>
               <p style={{ margin: '0' }}>{user.text}</p>
             </div>
@@ -258,25 +195,25 @@ function ChatRoom() {
       
       {/* Message input */}
       <div className="message-input">
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '8px' }}>
           <div className="nes-field" style={{ flex: '1' }}>
             <input
               type="text"
+              ref={inputRef}
               value={message}
               onChange={handleMessageChange}
               placeholder="Type a message..."
               className="nes-input"
-              ref={inputRef} // Attach ref to input element
             />
           </div>
           <button
-            onClick={handleSubmit}
+            type="submit"
             className="nes-btn is-primary"
           >
             Send
           </button>
-        </div>
-      </div>
+        </form>
+      </div> 
     </div>
   );
 }
