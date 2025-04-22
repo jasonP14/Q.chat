@@ -37,7 +37,7 @@ function handleSocketConnections(io) {
 
       // Add user to the active room
       activeRooms.get(roomId).set(socket.id, userData);
-      
+
       // Get user count
       const userCount = activeRooms.get(roomId).size;
 
@@ -89,6 +89,26 @@ function handleSocketConnections(io) {
       });
     });
 
+    // Handle images
+    socket.on('send_image', ({ roomId, image }) => {
+      const currentRoom = userRooms.get(socket.id);
+      if (roomId !== currentRoom || !activeRooms.has(roomId)) return;
+
+      const userInfo = activeRooms.get(roomId).get(socket.id);
+      if (!userInfo) return;
+
+      const imageMessage = {
+        type: 'image',
+        senderId: socket.id,
+        senderName: userInfo.displayName,
+        image,
+        timestamp: Date.now()
+      };
+
+      // Broadcast to everyone in the room (including sender)
+      io.to(roomId).emit('message', imageMessage);
+    });
+
     // Handle leaving room
     socket.on('leave_room', ({ roomId }) => {
       if (userRooms.get(socket.id) === roomId) {
@@ -99,12 +119,12 @@ function handleSocketConnections(io) {
     // Handle disconnection
     socket.on('disconnect', () => {
       console.log(`User disconnected: ${socket.id}`);
-      
+
       const roomId = userRooms.get(socket.id);
       if (roomId) {
         handleUserLeaving(socket, roomId, true);
       }
-      
+
       // Clean up the user tracking
       userRooms.delete(socket.id);
     });
@@ -115,17 +135,17 @@ function handleSocketConnections(io) {
 
       const roomUsers = activeRooms.get(roomId);
       const user = roomUsers.get(socket.id);
-      
+
       if (user) {
         // Remove user from room
         roomUsers.delete(socket.id);
-        
+
         // Remove from tracking
         userRooms.delete(socket.id);
-        
+
         // Get updated user count
         const userCount = roomUsers.size;
-        
+
         // Only notify if specified (prevents notification during room switching)
         if (notifyRoom) {
           // Notify room that user has left
@@ -136,7 +156,7 @@ function handleSocketConnections(io) {
             timestamp: Date.now()
           });
         }
-        
+
         // Clean up empty rooms
         if (roomUsers.size === 0) {
           activeRooms.delete(roomId);
@@ -145,7 +165,7 @@ function handleSocketConnections(io) {
 
         // Leave the socket.io room
         socket.leave(roomId);
-        
+
         console.log(`User ${socket.id} (${user.displayName}) left room: ${roomId}`);
         if (activeRooms.has(roomId)) {
           console.log(`Active users in ${roomId}:`, Array.from(activeRooms.get(roomId).values()));
