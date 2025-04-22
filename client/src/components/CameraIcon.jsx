@@ -1,24 +1,82 @@
-export default function CameraIcon({ height = 16, width = 16 }) {
-  return (
-    <svg fill="#FFFFFF" width={width} height={height} viewBox="0 0 400 400" id="Camera" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-      <g id="XMLID_106_">
-        <polygon id="XMLID_121_" points="186.7,66.7 213.3,66.7 240,66.7 266.7,66.7 266.7,40 240,40 213.3,40 186.7,40 160,40 133.3,40    133.3,66.7 160,66.7  " />
-        <rect height="26.7" id="XMLID_238_" width="26.7" x="106.7" y="66.7" />
-        <rect height="26.7" id="XMLID_239_" width="26.7" x="266.7" y="66.7" />
-        <polygon id="XMLID_240_" points="80,120 106.7,120 106.7,93.3 80,93.3 53.3,93.3 26.7,93.3 26.7,120 53.3,120  " />
-        <polygon id="XMLID_241_" points="320,120 346.7,120 373.3,120 373.3,93.3 346.7,93.3 320,93.3 293.3,93.3 293.3,120  " />
-        <polygon id="XMLID_242_" points="213.3,146.7 240,146.7 240,120 213.3,120 186.7,120 160,120 160,146.7 186.7,146.7  " />
-        <polygon id="XMLID_243_" points="373.3,120 373.3,146.7 373.3,173.3 373.3,200 373.3,226.7 373.3,253.3 373.3,280 373.3,306.7    373.3,333.3 400,333.3 400,306.7 400,280 400,253.3 400,226.7 400,200 400,173.3 400,146.7 400,120  " />
-        <rect height="26.7" id="XMLID_244_" width="26.7" x="133.3" y="146.7" />
-        <rect height="26.7" id="XMLID_245_" width="26.7" x="240" y="146.7" />
-        <polygon id="XMLID_246_" points="266.7,200 266.7,226.7 266.7,253.3 293.3,253.3 293.3,226.7 293.3,200 293.3,173.3 266.7,173.3     " />
-        <polygon id="XMLID_247_" points="133.3,200 133.3,173.3 106.7,173.3 106.7,200 106.7,226.7 106.7,253.3 133.3,253.3 133.3,226.7     " />
-        <rect height="26.7" id="XMLID_248_" width="26.7" x="133.3" y="253.3" />
-        <rect height="26.7" id="XMLID_249_" width="26.7" x="240" y="253.3" />
-        <polygon id="XMLID_250_" points="26.7,280 26.7,253.3 26.7,226.7 26.7,200 26.7,173.3 26.7,146.7 26.7,120 0,120 0,146.7 0,173.3    0,200 0,226.7 0,253.3 0,280 0,306.7 0,333.3 26.7,333.3 26.7,306.7  " />
-        <polygon id="XMLID_251_" points="186.7,280 160,280 160,306.7 186.7,306.7 213.3,306.7 240,306.7 240,280 213.3,280  " />
-        <polygon id="XMLID_252_" points="320,333.3 293.3,333.3 266.7,333.3 240,333.3 213.3,333.3 186.7,333.3 160,333.3 133.3,333.3    106.7,333.3 80,333.3 53.3,333.3 26.7,333.3 26.7,360 53.3,360 80,360 106.7,360 133.3,360 160,360 186.7,360 213.3,360 240,360    266.7,360 293.3,360 320,360 346.7,360 373.3,360 373.3,333.3 346.7,333.3  " />
-      </g>
-    </svg>
-  );
-}
+import * as React from "react";
+const CameraIcon = (props) => (
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <rect width={200} height={200} fill="transparent" />
+    <rect
+      x={40}
+      y={60}
+      width={120}
+      height={80}
+      fill="#8A2BE2"
+      stroke="#000000"
+      strokeWidth={4}
+      strokeLinejoin="miter"
+    />
+    <path
+      d="M60,60 v-15 h80 v15"
+      fill="#8A2BE2"
+      stroke="#000000"
+      strokeWidth={4}
+      strokeLinejoin="miter"
+    />
+    <rect
+      x={70}
+      y={50}
+      width={20}
+      height={10}
+      fill="#FFFFFF"
+      stroke="#000000"
+      strokeWidth={2}
+    />
+    <rect
+      x={80}
+      y={80}
+      width={40}
+      height={40}
+      fill="#6B238E"
+      stroke="#000000"
+      strokeWidth={4}
+      strokeLinejoin="miter"
+    />
+    <rect
+      x={90}
+      y={90}
+      width={20}
+      height={20}
+      fill="#D896FF"
+      stroke="#000000"
+      strokeWidth={2}
+      strokeLinejoin="miter"
+    />
+    <rect
+      x={135}
+      y={70}
+      width={15}
+      height={10}
+      fill="#FF69B4"
+      stroke="#000000"
+      strokeWidth={2}
+      strokeLinejoin="miter"
+    />
+    <rect
+      x={50}
+      y={70}
+      width={15}
+      height={15}
+      fill="#000000"
+      stroke="#000000"
+      strokeWidth={2}
+    />
+    <rect x={53} y={73} width={9} height={9} fill="#D896FF" />
+    <rect x={45} y={65} width={5} height={5} fill="#D896FF" />
+    <rect x={150} y={95} width={5} height={5} fill="#D896FF" />
+    <rect x={125} y={130} width={10} height={5} fill="#D896FF" />
+    <path
+      d="M40,80 h120 M40,100 h120 M40,120 h120 M60,60 v80 M80,60 v80 M100,60 v80 M120,60 v80 M140,60 v80"
+      stroke="#6B238E"
+      strokeWidth={1}
+      strokeOpacity={0.3}
+    />
+  </svg>
+);
+export default CameraIcon;

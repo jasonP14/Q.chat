@@ -87,7 +87,7 @@ function ChatRoom() {
           // Calculate new dimensions while maintaining aspect ratio
           let width = img.width;
           let height = img.height;
-          const maxDimension = 64;
+          const maxDimension = 128;
 
           if (width > height && width > maxDimension) {
             height = Math.round((height * maxDimension) / width);
@@ -247,13 +247,12 @@ function ChatRoom() {
       {/* Message input */}
       <div className="message-input">
         <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '8px' }}>
-          <button
-            type="button"
-            className="nes-btn is-primary flex align-items-center justify-content-center"
+          <div
+            className="flex align-items-center justify-content-center"
             onClick={handleImageUpload}
           >
-            <CameraIcon />
-          </button>
+            <CameraIcon width={48} height={48}  />
+          </div>
           <div className="nes-field" style={{ flex: '1' }}>
             <input
               type="text"
