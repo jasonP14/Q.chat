@@ -13,7 +13,7 @@ Quickstart (using docker)
 Clone this repo and run the docker-compose stack:
 
 ```bash
-git clone git@github.com:sinandredemption/kath.git && cd kath
+git clone https://github.com/sinandredemption/kath.git && cd kath
 docker compose up --build # Or docker-compose up --build
 ```
 
