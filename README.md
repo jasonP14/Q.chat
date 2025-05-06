@@ -2,7 +2,11 @@ Kath
 -------
 Kath is a lightweight, retro-style, ephemeral chat app with a small twist: you can see what the other people in the room are typing in real-time.
 
-- Demo: [kath.fahads.net](https://kath.fahads.net/)
+| Landing Page                                  | Chat Screen                            |
+| --------------------------------------------- | ----------------------------------- |
+| ![Landing Page](screenshots/landing-page.png) | ![Chat Screen](screenshots/chat-screen.png) |
+
+- **Demo:** [kath.fahads.net](https://kath.fahads.net/)
 
 Quickstart (using docker)
 -------
