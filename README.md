@@ -23,7 +23,7 @@ Development
 -------
 Kath is built using React and Node.js. To run Kath locally for development purposes, you'll need to set up both the client and server components.
 
-## Prerequisites
+### Prerequisites
 *   **Node.js**
 *   **npm**
 
@@ -54,4 +54,4 @@ Kath should now be running on port 5173. Navigate to `http://localhost:5173/` in
 
 Credits
 -------
-This project utilizes the wonderful [NES.css](https://nostalgic-css.github.io/NES.css/) framework by [BcRikko](https://github.com/BcRikko) for its retro styling.
+This project utilizes the wonderful [NES.css](https://nostalgic-css.github.io/NES.css/) framework for its retro styling.
