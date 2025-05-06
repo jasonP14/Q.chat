@@ -83,7 +83,14 @@ function LandingPage() {
           Messages are not stored. Enter a room name to join or create it.
         </div>
         <div className="nes-text" style={{ textAlign: 'center', marginTop: '24px', fontSize: '10px' }}>
+          <a
+            href="https://github.com/sinandredemption/kath"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'black' }}
+          >
           Made with <i className="nes-icon heart is-small"></i> by Fahad
+          </a>
         </div>
       </div>
     </div>

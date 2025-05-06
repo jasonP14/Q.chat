@@ -17,35 +17,35 @@ function useChat(roomId, displayName) {
     if (!socket.connected) {
       socket.connect();
     }
-    
+
     // Join the room
     socket.emit('join_room', { roomId, displayName });
-    
+
     // Socket event handlers
     function onConnect() {
       setIsConnected(true);
     }
-    
+
     function onDisconnect() {
       setIsConnected(false);
     }
-    
+
     function onMessage(newMessage) {
       // Add current user ID to each message for easier rendering
       const messageWithUserId = {
         ...newMessage,
         currentUserId: socket.id
       };
-      
+
       setMessages((prevMessages) => [...prevMessages, messageWithUserId]);
-      
+
       // Play received sound only if the message is not from the current user
       if (newMessage.senderId !== socket.id) {
         const audio = new Audio(receivedSound);
         audio.play();
       }
     }
-    
+
     function onUserTyping({ userId, displayName, isTyping, text }) {
       setTypingUsers(prev => {
         if (isTyping) {
@@ -57,25 +57,25 @@ function useChat(roomId, displayName) {
         }
       });
     }
-    
+
     // Register event listeners
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('message', onMessage);
     socket.on('user_typing', onUserTyping);
-    
+
     // Handle connection status
     if (socket.connected) {
       setIsConnected(true);
     }
-    
+
     // Clean up on unmount
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
       socket.off('message', onMessage);
       socket.off('user_typing', onUserTyping);
-      
+
       // Only emit leave_room if we're actually connected
       if (socket.connected) {
         socket.emit('leave_room', { roomId });
@@ -93,7 +93,7 @@ function useChat(roomId, displayName) {
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
-    
+
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
@@ -105,13 +105,25 @@ function useChat(roomId, displayName) {
       roomId,
       text
     });
-    
+
     // Play sent sound
     const audio = new Audio(sentSound);
     audio.play();
-    
+
     // Clear typing status
     setTypingStatus(false, '');
+  };
+
+  // Function to send image as base64 string
+  const sendImage = (image) => {
+    socket.emit('send_image', {
+      roomId,
+      image
+    });
+
+    // Play sent sound
+    const audio = new Audio(sentSound);
+    audio.play();
   };
 
   const setTypingStatus = (isTyping, text) => {
@@ -133,6 +145,7 @@ function useChat(roomId, displayName) {
     typingUsers,
     isConnected,
     sendMessage,
+    sendImage,
     setTypingStatus,
     leaveRoom
   };
