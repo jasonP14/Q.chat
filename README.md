@@ -1,4 +1,4 @@
-Kath - Retro Ephemeral Chat
+Kath
 -------
 Kath is a lightweight, retro-style, ephemeral chat app with a small twist: you can see what the other people in the room are typing in real-time.
 
